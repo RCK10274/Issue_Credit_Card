@@ -1,2 +1,2 @@
-# made by HungPin/ShengHung
+# Made by HungPin/ShengHung
 Practice coding
