@@ -1,0 +1,64 @@
+Fundamental of git command 
+
+2023年12月1日
+下午 04:13
+
+Git 原本是在Linux上執行,搬來Window後在bash上依然有Linux的語法存在
+在使用Git前要先設置user.name與user.email
+設置user.name : git config --global user.name
+設置user.email : git config --global user.email
+改語法名稱
+git 
+
+Git 的基礎操作
+
+Ls :當下目錄所有成員(linux語法,list的縮寫),也可以ls -al表示顯示所有檔案、文件、子目錄、隱藏文件
+git status : 查看當前倉庫狀態
+git init : GIT初始化
+git status : 查看目前狀態
+git add 加入的檔案名稱(含副檔名) : 新增檔案到git管控,如果是git add . 表示資料夾內所有檔案加進去
+git log：顯示每次add的資料(修改紀錄) 
+git commit : 存檔, 也可以是git commit -m "附註文字", 這樣會在git log上看到每次儲存附註的文字
+git reset --hard 本版編號：切換至版本對應編號的版本,版本編號只需前4碼即可
+git reflog：顯示版本切換紀錄
+git branch : 查看當前倉庫的所有分支(預設master)
+git branch 分支名稱 : 創建一個新的分支
+git checkout 分支名稱 : 切換到指定分支
+git checkout -b 分支名稱 : 與Git branch 分支名稱指令相同,只是會在創建的同時切換進新創建的分支
+git merge 分支名稱 : 將指定分支與你當前所在的主分支結合
+git branch -d 分支名稱 : 刪除指定分支
+git tag 標籤內容 : 為當前的分支標籤內容,上完標籤內容後,可以以標籤內容切換分支,git checkout 標籤內容
+
+連接github
+
+以SSH連接git與github的連線
+Step 1:
+生成SSH key
+指令 ssh 確認是否有安裝ssh
+Step 2:
+輸入 ssh-keygen -t rsa Enter兩次
+會生成兩個文件 密鑰:id_rsa 與 公鑰:id_rsa.pub
+Step 3:
+上github添加SSH key
+Setting -> SSH and GPG keys ->New SSH key -> 將id_rsa.pub的內容貼到Key位置處 ->點擊 Add SSH key
+Step 4:
+驗證綁定是否成功
+輸入 ssh -T git@github.com
+
+通過git將代碼提交github (pull/push)
+下載項目的網址(URL)EX : https://github.com/RCK10274/Project-Spiders.git
+git clone 項目網址 : 將項目倉庫的內容下載到當前host中
+
+將本地倉庫內容上傳到github的倉庫上(push)
+git push origin 當前的分支名稱 : origin為遠端倉庫預設名稱第一次上傳會需要登陸github,要寫帳號密碼
+git remote -v : 可看到當前遠程倉庫的名稱列表
+git remote rename origin(舊名稱) 新名稱 : 改名(舊名稱 -> 新名稱)
+git remote set-url 倉庫名稱 倉庫URL名稱: 修改倉庫URL資料
+
+同步遠端/本地倉庫
+git remote add 遠端倉庫名稱 倉庫URL : 關聯遠端倉庫
+Git pull 遠端倉庫名稱 分支名稱 : 同步遠端倉庫與本地倉庫
+
+git push -u origin {分支名稱} : 
+
+git remote remove {remote-name}:刪除遠端倉庫
