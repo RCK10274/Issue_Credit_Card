@@ -62,3 +62,5 @@ Git pull 遠端倉庫名稱 分支名稱 : 同步遠端倉庫與本地倉庫
 git push -u origin {分支名稱} : 
 
 git remote remove {remote-name}:刪除遠端倉庫
+
+0000000000
