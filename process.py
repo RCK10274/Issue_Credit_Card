@@ -32,35 +32,93 @@ def matrix(true, pre):#混淆矩陣
     print(f"f-measure: {f}", f)
 
 
-def main_p():
+def DataProcess(path):
 
-    data = pd.read_csv("AER_credit_card_data.csv")
-
-    data['card']=data["card"].map({"yes":1, "no":0})
-    data["selfemp"]=data['selfemp'].map({"yes":1, "no":0})
-    data["owner"]=data['owner'].map({"yes":1, "no":0})
+    data = pd.read_csv(path)
+    check_null = np.sum(data.isnull(), axis=0)#確認沒有缺失值
+    #print(check_null)
+    data = data.drop(data[data["age"]<18].index, axis=0)
+    data["reports"] = data.loc[:,"reports"].apply(lambda x: "less than 4" if x < 4 else "equal and greater then 4")
+    one_hot_rep = pd.get_dummies(data["reports"], prefix="reports")#---------------------
     
-    y = data['card']  # 目標列
-    X = data.drop(columns="card", axis=1)  # 特徵
-    
-    return X, y, data
+    data['age'] = data['age'].astype(float)
+    def age(row):
+        if row>=18 and row<30:
+            return "18~30"
+        elif row>=30 and row<50:
+            return "30~50"
+        elif row>=50:
+            return "50~"
+    data['age']=data['age'].apply(age)
+    one_hot_age = pd.get_dummies(data["age"], prefix="age")#------------------------
+    #print(np.sort(data["age"].unique()))
 
-def main_t_B(X, y):
+    def ceiling_floor(df, column_name):
+        Q1 = df[column_name].quantile(0.25)
+        Q3 = df[column_name].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_limit = Q1 - 1.5 * IQR
+        upper_limit = Q3 + 1.5 * IQR
+        max_d = df.loc[df[column_name] <= upper_limit, column_name].max()
+        min_d = df.loc[df[column_name] >= lower_limit, column_name].min()
+        df.loc[df[column_name] < lower_limit, column_name] = min_d
+        df.loc[df[column_name] > upper_limit, column_name] = max_d
+        return df
+    data = ceiling_floor(data, 'income')
+    data = ceiling_floor(data, 'expenditure')
+    data = ceiling_floor(data, 'share')
 
-    #分割資料
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    
-    Gaussian_model=GaussianNB() 
-    Gaussian_model.fit(X_train, y_train)
-    print(Gaussian_model.score(X_test, y_test))
+    def z(row):#極值正規化
+        return (row-row.mean())/row.std()
+    data["income"] = z(data["income"])
+    data["expenditure"] = z(data["expenditure"])
 
-    Multinomial_model=MultinomialNB() 
-    Multinomial_model.fit(X_train, y_train)
-    print(Multinomial_model.score(X_test, y_test))
+    one_hot_owner = pd.get_dummies(data["owner"], prefix="owner")#------------------------
+    one_hot_selfemp = pd.get_dummies(data["selfemp"], prefix="selfemp")#------------------------
     
-    Bernoulli_model=BernoulliNB() 
-    Bernoulli_model.fit(X_train, y_train)
-    print(Bernoulli_model.score(X_test, y_test))
+    def dep(row):
+        if row==0 or row==1:
+            return "0~1"
+        else:
+            return "1~"
+    data["dependents"] = data["dependents"].apply(dep)
+    one_hot_dep = pd.get_dummies(data["dependents"], prefix="dependents")#------------------------
+    
+    def mon(row):
+        if row<50:
+            return "~50"
+        elif row<50 and 60<row:
+            return "50~60"
+        else:
+            return "60~"
+    data["months"] = data["months"].apply(mon)
+    one_hot_mon = pd.get_dummies(data["months"], prefix="months")#------------------------
+    
+    def mc(row):
+        if row>=1:
+            return ">=1"
+        else:
+            return "0"
+    data["majorcards"] = data["majorcards"].apply(mc)
+    one_hot_mc = pd.get_dummies(data["majorcards"], prefix="majorcards")#------------------------
+    
+    def active(row):
+        if row>=7:
+            return ">=7"
+        else:
+            return "<7"
+    data["active"] = data["active"].apply(active)
+    one_hot_active = pd.get_dummies(data["majorcards"], prefix="majorcards")#------------------------
+    
+    feature_df = data.copy()
+    target = data["card"].map({"yes":True, "no":False})
+    feature_df = feature_df.drop(["card", "reports", "age", "owner", "selfemp", "dependents", "months", "majorcards", "active"], axis=1)
+    feature_df = pd.concat([feature_df, one_hot_rep, one_hot_age, one_hot_owner, one_hot_selfemp, 
+                    one_hot_dep, one_hot_mon, one_hot_mc, one_hot_active], axis=1).reset_index()
+    #-----------------------------------------------------------------------------------
+    print(feature_df)
+    print(target)
+    return feature_df, target
 
 def Table(df):
 
@@ -91,20 +149,6 @@ def Table(df):
     #print(predictions, actuals_1d)
     matrix(actuals_1d, predictions)
 
-def DecisionTree(X,y):#decision tree
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    decison_tree = DecisionTreeClassifier()
-    decison_tree.fit(X_train,y_train)
-    pre = decison_tree.predict(X_test)
-    matrix(y_test,pre)
-    
-
-
-
-
-X, y, data=main_p()
-#print(data)
-#main_t_B(X,y)
-Table(data)
-#DecisionTree(X, y)
+data_name ="AER_credit_card_data.csv"
+DataProcess(data_name)
