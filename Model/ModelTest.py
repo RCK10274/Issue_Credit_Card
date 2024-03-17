@@ -33,5 +33,12 @@ def Table(df):
     predictions = np.argmax(preds, axis=1)
     actuals_1d = actuals.squeeze()
 
+data_name ="Data/Data2.csv"
+data2 = pd.read_csv(data_name)
+target2 = data2["card"]
+feature_df2 = data2.iloc[:,1:]
+X_train, X_test, y_train, y_test = train_test_split(feature_df2, target2, test_size=0.2)
 
-data_name ="AER_credit_card_data.csv"
+G = GaussianNaiveBayes()
+G.fit(X_train,y_train)
+print(G.predict(X_test))
