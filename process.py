@@ -7,7 +7,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import BernoulliNB 
 from fastai.tabular.all import *
 from sklearn import metrics
-
+from sklearn.tree import DecisionTreeClassifier
 
 # 信用不良紀錄： 4點以下
 # 年齡：青壯年族群
@@ -34,7 +34,6 @@ def matrix(true, pre):#混淆矩陣
 
 def main_p():
 
-
     data = pd.read_csv("AER_credit_card_data.csv")
 
     data['card']=data["card"].map({"yes":1, "no":0})
@@ -42,20 +41,14 @@ def main_p():
     data["owner"]=data['owner'].map({"yes":1, "no":0})
     
     y = data['card']  # 目標列
-
     X = data.drop(columns="card", axis=1)  # 特徵
     
-    
     return X, y, data
-
-
-
 
 def main_t_B(X, y):
 
     #分割資料
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    
     
     Gaussian_model=GaussianNB() 
     Gaussian_model.fit(X_train, y_train)
@@ -69,7 +62,8 @@ def main_t_B(X, y):
     Bernoulli_model.fit(X_train, y_train)
     print(Bernoulli_model.score(X_test, y_test))
 
-def main2(X, y, df):
+def Table(df):
+
     df['LogIncome'] = np.log1p(df['income'])
     df['LogExpenditure'] = np.log1p(df['expenditure'])
     df['LogMonths'] = np.log1p(df['months'])
@@ -91,15 +85,26 @@ def main2(X, y, df):
 
     preds, actuals = learn.get_preds()
     predictions = np.argmax(preds, axis=1)
-    actuals_1d = actuals.squeeze()  # Convert the 2D tensor to a 1D tensor
-    comparison_table = pd.DataFrame({'Predictions': predictions, 'Actuals': actuals_1d})
-    comparison_table.to_csv('credit_model_results.csv')
-    #print(preds)
-    print(predictions, actuals_1d)
+    actuals_1d = actuals.squeeze()
+    print("-"*30)
+    print(actuals_1d)
+    #print(predictions, actuals_1d)
     matrix(actuals_1d, predictions)
+
+def DecisionTree(X,y):#decision tree
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    decison_tree = DecisionTreeClassifier()
+    decison_tree.fit(X_train,y_train)
+    pre = decison_tree.predict(X_test)
+    matrix(y_test,pre)
+    
+
+
 
 
 X, y, data=main_p()
 #print(data)
 #main_t_B(X,y)
-main2(X, y, data)
+Table(data)
+#DecisionTree(X, y)
