@@ -8,6 +8,7 @@ class GaussianNaiveBayes:
         self.var_smoothing = var_smoothing
     
     def fit(self,X,y):
+
         self.means = {}
         self.stds = {}
         self.class_priors = {}
@@ -24,7 +25,11 @@ class GaussianNaiveBayes:
             #Step2 : 計算P(y1),P(y2),........,P(yn)
 
         #Step3 : 分別計算P(a1|y1),P(a2|y1)...P(am|y1)、P(a1|y2),P(a2|y2)...P(am|y2)、.......、P(a1|yn),P(a2|yn)...P(am|yn)
-
+        print(self.means)
+        print("-"*20)
+        print(self.stds)
+        print("-"*20)
+        print(self.class_priors)
 
     def predict(self, X):
         predictions = []
@@ -38,26 +43,16 @@ class GaussianNaiveBayes:
             predictions.append(max(class_probabilities, key=class_probabilities.get))
         return np.array(predictions)
 
-    
-    def probability_density(self, cls, x):#高斯概率密度函數
-        #1/(std*根號(2pi))*(自然數)**((-1/2)*((x-mean)/std)**2)
-        mean = self.means[cls]
-        std = self.stds[cls]
-        numerator = np.exp(- (x - mean) ** 2 / (2 * std ** 2))
-        denominator = np.sqrt(2 * np.pi * std ** 2)
-        return numerator / denominator
 
-
-
-
+    def calculate_probability(self, x, mean, std):
+        return (1 / (np.sqrt(2 * np.pi) * std)) * np.exp(-((x - mean)**2 / (2 * std**2)))
 
 if __name__=="__main__":
-    name2 = "Data/Data2.csv"
+    name2 = "Data/Data1.csv"
     data2 = pd.read_csv(name2)
-    target2 = data2["card"]
-    feature_df2 = data2.iloc[:,1:]
+    target2 = data2["核卡狀況"]
+    feature_df2 = data2.iloc[:,1:10]
 
     X_train, X_test, y_train, y_test = train_test_split(feature_df2, target2, test_size=0.2)
     GN = GaussianNaiveBayes()
     GN.fit(X_train, y_train)
-    print(GN.predict(X_test))
