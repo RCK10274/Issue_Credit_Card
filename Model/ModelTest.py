@@ -9,6 +9,7 @@ from fastai.tabular.all import *
 from sklearn import metrics
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
+from tqdm import tqdm
 
 def Table(df):
 
@@ -35,81 +36,60 @@ def Table(df):
     actuals_1d = actuals.squeeze()
 
 
-import numpy as np
-
-
 class LogisticR:
-    def __init__(self, weight=None, bias=None, learning_rate=0.01, iter=100):
-        self.weight=weight
-        self.bias=bias
-        self.learning_rate=learning_rate
-        self.iter=iter
+    def __init__(self, learning_rate=0.01, iter=10000, s=None):
+        """
+        learning_rate:學習率
+        iter:跌代次數
+        s:指定random seed
+        """
+        self.learning_rate = learning_rate
+        self.iter = iter
+        self.s = s
+        self.weight = None
+        self.bias = None
 
     def fit(self, X, y):
-        self.X = X
-        self.y = y
-        if self.weight==None:
-            self.weight = np.ones(X.shape[1])
-        if self.bias==None:
-            self.bias = 0
+        n_samples, n_features = X.shape
+        rng = np.random.RandomState(self.s)
+        self.weight = rng.randn(n_features)
+        self.bias = 0
 
-    def sigmoid(self,z):#定義邏輯回函數(閥0.5)
-        return 1 / (1 + np.exp(-z))#g(z) = 1/(1+e^-z)
+        for _ in tqdm(range(self.iter)):
+            y_pred = self.get_predict(X)
+            dw = (1 / n_samples) * np.dot(X.T, y_pred-y)
+            db = (1 / n_samples) * np.sum(y_pred - y)
+            self.weight -= self.learning_rate * dw
+            self.bias -= self.learning_rate * db
+        return self.weight, self.bias
+    
+    def sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
 
-    def predict(self, features):
-        """
-        features: 特徵
-        """
-        z = np.dot(features, self.weights) + self.bias#(Θ0 + Θ1*w1 + Θ2*w2 + Θn*wn)
-        return np.where(self.sigmoid(z)>=0.5, 1, 0)#回傳邏輯回歸假設函數
+    def get_predict(self, X):
+        z = np.dot(X, self.weight) + self.bias
+        return self.sigmoid(z)
 
-    def loss_funtion(self,true, pred):#Cost(hΘ(x),y)=-ylog(hΘ(x)-(1-y)log(1-hΘ(x)))
-        m = len(true)
-        loss = np.sum(true * np.log(pred) - (1 - true) * np.log(1 - pred))
-        loss2 = -np.sum()#-Σ{1~i}Σ{1~c} yiclog(pre)
-        return loss
+    def predict(self, X):
+        probabilities = self.get_predict(X)
+        return np.array([1 if i > 0.5 else 0 for i in probabilities])
 
-    def cost_funtion(self,true, pred):#計算代價函數
-        return
-
-    def gradient_descent(self):
-        """
-        weights: 權重
-        bias: 偏至
-        learning_rate: 學習速率
-        """
-        m = len(self.y)
-        features = self.X
-        weights = self.weight
-        bias = self.bias
-
-        for _ in range(self.iter):
-            y_pred = self.predict(features, weights, bias)
-
-            #損失函數的差異
-            w = (1/m) * np.dot(features.T, (y_pred - y_true))#1/m Σ{1~m} x(hΘ(x)-y)
-            b = (1/m) * np.sum(y_pred - y_true)
-            #更新權重與偏移
-            weights -= self.learning_rate * w#Θ = Θ-learning_rate()
-            bias -= self.learning_rate * b
-            print(weights, bias)
-            
-        return weights,bias
-     
     def score(self, X, y):
         y_pred = self.predict(X)
-        accuracy = np.sum(y == y_pred) / len(y)
-        return accuracy
-
-
-
+        return np.mean(y == y_pred)
 
 data_numeric = pd.read_csv("Data/Data2.csv")
 data_numeric = data_numeric.astype(float)
-features = data_numeric.drop('card', axis=1).values
-y_true = data_numeric['card'].values
+features = data_numeric.drop(['card','share','expenditure'], axis=1)
+y_true = data_numeric['card']
+X_train, X_test, y_train, y_test = train_test_split(features, y_true, test_size=0.2)
 
-
+#print(X_train.shape, y_train.shape)
+GR = LogisticR()
+GR.fit(X_train, y_train)
+print(GR.score(X_test, y_test))
+print(GR.weight)
+print(GR.bias)
 #z = features
 #a = 1 / (1 + np.exp(-z))
 #a = np.where(a<0.5, 0, 1)
@@ -117,8 +97,8 @@ y_true = data_numeric['card'].values
 #print(np.sum(a!=0))
 '''
 X_train,  X_test, y_train, y_test = train_test_split(data_numeric.iloc[:,1:], data_numeric.iloc[:,0], test_size=0.2)
-
-LG = LogisticRegression()
-LG.fit(X_train,y_train)
-print(LG.score(X_test,y_test))
 '''
+
+#LG2 = LogisticRegression()
+#print(LG2.fit(X_train,y_train))
+#print(LG2.score(X_test,y_test))
