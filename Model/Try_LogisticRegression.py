@@ -79,21 +79,22 @@ class LogisticR:
         y_pred = self.predict(X)
         return np.mean(y == y_pred)
 
-data_numeric = pd.read_csv("Data/Data2.csv")
+data_numeric = pd.read_csv("Data/Data1.csv")
 data_numeric = data_numeric.astype(float)
-features = data_numeric.drop(['card','share','expenditure'], axis=1)
-y_true = data_numeric['card']
+features = data_numeric.drop(['核卡狀況','每月信用卡支出平均','收支比'], axis=1)
+y_true = data_numeric['核卡狀況']
 X_train, X_test, y_train, y_test = train_test_split(features, y_true, test_size=0.2)
 
-#GR = LogisticR()
-#GR.fit(X_train, y_train)
-#pre = GR.predict(X_test)
-#matrix(y_test, pre)
+GR = LogisticR(learning_rate=0.020999999999999998, iter=730)
+GR.fit(X_train, y_train)
+pre = GR.predict(X_test)
+matrix(y_test, pre)
 
-gs = GridSearch(LogisticR, "LogisticR", {"learning_rate":[i for i in np.arange(0.001,0.1,0.01)], "iter":[i for i in np.arange(100,1000,10)]})
-gs.fit(X_train,y_train, X_test, y_test)
-
-#LG2 = LogisticRegression()
-#print(LG2.fit(X_train,y_train))
-#pre2 = LG2.predict(X_test)
-#matrix(y_test, pre2)
+#gs = GridSearch(LogisticR, "LogisticR", {"learning_rate":[i for i in np.arange(0.001,0.1,0.01)], "iter":[i for i in np.arange(100,1000,10)]})
+#gs.fit(X_train,y_train, X_test, y_test)
+'''
+LG2 = LogisticRegression()
+LG2.fit(X_train,y_train)
+pre2 = LG2.predict(X_test)
+matrix(y_test, pre2)
+'''
