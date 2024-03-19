@@ -36,69 +36,14 @@ def Table(df):
     actuals_1d = actuals.squeeze()
 
 
-class LogisticR:
-    def __init__(self, learning_rate=0.01, iter=10000, s=None):
-        """
-        learning_rate:學習率
-        iter:跌代次數
-        s:指定random seed
-        """
-        self.learning_rate = learning_rate
-        self.iter = iter
-        self.s = s
-        self.weight = None
-        self.bias = None
 
-    def fit(self, X, y):
-        n_samples, n_features = X.shape
-        rng = np.random.RandomState(self.s)
-        self.weight = rng.randn(n_features)
-        self.bias = 0
+def OriginalDataGet():
+    data = pd.read_csv(r"D:\Software\Github\Issue_Credit_Card\Data\AER_credit_card_data.csv")
+    data['card']=data["card"].map({"yes":1, "no":0})
+    data["selfemp"]=data['selfemp'].map({"yes":1, "no":0})
+    data["owner"]=data['owner'].map({"yes":1, "no":0})
+    return data
 
-        for _ in tqdm(range(self.iter)):
-            y_pred = self.get_predict(X)
-            dw = (1 / n_samples) * np.dot(X.T, y_pred-y)
-            db = (1 / n_samples) * np.sum(y_pred - y)
-            self.weight -= self.learning_rate * dw
-            self.bias -= self.learning_rate * db
-        return self.weight, self.bias
-    
-    def sigmoid(self, z):
-        return 1 / (1 + np.exp(-z))
-
-    def get_predict(self, X):
-        z = np.dot(X, self.weight) + self.bias
-        return self.sigmoid(z)
-
-    def predict(self, X):
-        probabilities = self.get_predict(X)
-        return np.array([1 if i > 0.5 else 0 for i in probabilities])
-
-    def score(self, X, y):
-        y_pred = self.predict(X)
-        return np.mean(y == y_pred)
-
-data_numeric = pd.read_csv("Data/Data2.csv")
-data_numeric = data_numeric.astype(float)
-features = data_numeric.drop(['card','share','expenditure'], axis=1)
-y_true = data_numeric['card']
-X_train, X_test, y_train, y_test = train_test_split(features, y_true, test_size=0.2)
-
-#print(X_train.shape, y_train.shape)
-GR = LogisticR()
-GR.fit(X_train, y_train)
-print(GR.score(X_test, y_test))
-print(GR.weight)
-print(GR.bias)
-#z = features
-#a = 1 / (1 + np.exp(-z))
-#a = np.where(a<0.5, 0, 1)
-#print(np.sum(a==0))
-#print(np.sum(a!=0))
-'''
-X_train,  X_test, y_train, y_test = train_test_split(data_numeric.iloc[:,1:], data_numeric.iloc[:,0], test_size=0.2)
-'''
-
-#LG2 = LogisticRegression()
-#print(LG2.fit(X_train,y_train))
-#print(LG2.score(X_test,y_test))
+Original_data = OriginalDataGet()
+pearson_csv = Original_data.corr()
+print(pearson_csv)

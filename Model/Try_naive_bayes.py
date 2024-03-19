@@ -24,7 +24,6 @@ class GaussianNaiveBayes:
             self.class_priors[cls] = X_cls.shape[0] / y.shape[0]#存取字典{目標唯一值:唯一值總數量/y總數量(概率)}
             #Step2 : 計算P(y1),P(y2),........,P(yn)
 
-        #Step3 : 分別計算P(a1|y1),P(a2|y1)...P(am|y1)、P(a1|y2),P(a2|y2)...P(am|y2)、.......、P(a1|yn),P(a2|yn)...P(am|yn)
         print(self.means)
         print("-"*20)
         print(self.stds)
@@ -42,7 +41,6 @@ class GaussianNaiveBayes:
 
             predictions.append(max(class_probabilities, key=class_probabilities.get))
         return np.array(predictions)
-
 
     def calculate_probability(self, x, mean, std):
         return (1 / (np.sqrt(2 * np.pi) * std)) * np.exp(-((x - mean)**2 / (2 * std**2)))
