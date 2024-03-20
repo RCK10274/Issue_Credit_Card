@@ -16,6 +16,7 @@ df.drop(df[df["age"] <15].index, inplace=True)
 df["age"] = df["age"].astype(int)
 df["income"] = df["income"] * 10000
 df["months"] = df["months"] // 12
+df['share'] = df['share']*100
 #-----------------------------------------------------------------------------#
 '''核卡結果比率 - 圓餅圖'''#OK
 plt.rcParams['font.sans-serif'] = ['SimSun']
@@ -25,9 +26,9 @@ Font = "SimSun"
 # colors = ['gold', 'lightcoral']
 
 # plt.pie(sizes, colors=colors, autopct='%1.1f%%')
-# plt.title("信用卡核准比例", fontname=Font)
+# plt.title("信用卡核准比例")
 # plt.axis('equal')
-# plt.legend(loc="upper left", labels=labels)
+# plt.legend(loc="upper left", labels=["核准通過", "核准不通過"])
 # plt.savefig("信用卡核准比例-圓餅圖")
 # plt.show()
 #-----------------------------------------------------------------------------#
@@ -45,25 +46,18 @@ Font = "SimSun"
 # plt.xlabel("年齡", fontname=Font)
 # plt.xticks([20, 40, 60, 80])
 
-# xmin, xmax = plt.xlim()
-# ymin, ymax = plt.ylim()
-
-# plt.axvline(x=age_mean, color='r', linestyle='--', ymin=(ymax - ymin) * 0.1 / (ymax - ymin), ymax=(ymax - ymin) * 0.9 / (ymax - ymin))
-
-# plt.title("年齡-箱型圖", fontname=Font)
+# plt.title("年齡-箱型圖")
 # plt.grid(axis='x')
 
 # plt.subplot(1, 2, 2)
 # sns.histplot(df["age"][df["card"]=='yes'], bins=20, color="skyblue")
-# plt.xlabel("年齡", fontname=Font)
-# plt.ylabel("人數", fontname=Font)
-# plt.xticks([20, 40, 60, 80])
+# plt.xlabel("年齡")
+# plt.ylabel("人數")
+# plt.xticks([20, 25, 30, 35, 40, 45, 50])
 # plt.yticks([0, 50, 100, 150])
-# plt.title("年齡分布圖", fontname=Font)
+# plt.title("年齡分布圖")
 # plt.grid(axis='y')
-
-# plt.tight_layout()
-# plt.show()
+# plt.savefig("年齡分布 - 箱型圖及分布圖")
 #-----------------------------------------------------------------------------#
 '''年齡與核卡結果關係 - 交叉分析長條圖'''#ok
 df["年齡分組"] = pd.cut(df["age"], bins=[17, 29, 39, 49, 59, 69, 99], labels=["18~29歲", "30~39歲", "40~49歲","50~59歲", "60~69歲", "70歲以上"])
@@ -77,14 +71,14 @@ df["年齡分組"] = pd.cut(df["age"], bins=[17, 29, 39, 49, 59, 69, 99], labels
 
 # plt.bar(bar_1, No_counts, color='skyblue', width=0.35, label='No')
 # plt.bar(bar_2, Yes_counts, color='lightcoral', width=0.35, label='Yes')
-# plt.xticks(bar_1 + 0.35 / 2, No_counts.index, fontname=Font)
+# plt.xticks(bar_1 + 0.35 / 2, No_counts.index)
 
-# plt.xlabel('年齡', fontname=Font)
-# plt.ylabel('人數', fontname=Font)
-# plt.title('年齡與核卡狀況關係-柱狀圖', fontname=Font)
+# plt.xlabel('年齡')
+# plt.ylabel('人數')
+# plt.title('年齡與核卡狀況關係 - 交叉分析圖')
+# plt.grid(axis='y')
 # plt.legend()
-# plt.savefig("年齡與核卡狀況關係-柱狀圖")
-# plt.show()
+# plt.savefig("年齡與核卡狀況關係 - 交叉分析圖")
 #-----------------------------------------------------------------------------#
 '''年齡與核卡結果關係 - 長條圖'''#OK
 # Age_total = df["年齡分組"].value_counts()
@@ -94,7 +88,6 @@ df["年齡分組"] = pd.cut(df["age"], bins=[17, 29, 39, 49, 59, 69, 99], labels
 
 # plt.figure(figsize=(10, 6))
 # plt.bar(yes_rates.index, yes_rates.values, width=0.5, color='red')
-# #yes_rates.plot(kind='bar', color='red') 
 
 # plt.xlabel('年齡分布', fontname=Font)
 # plt.ylabel('核卡成功率 (%)', fontname=Font)
@@ -117,22 +110,19 @@ df["年齡分組"] = pd.cut(df["age"], bins=[17, 29, 39, 49, 59, 69, 99], labels
 # plt.figure(figsize=(10, 6))
 # plt.subplot(1, 2, 1)
 # sns.boxplot(df["income"]/10000, color="skyblue", orient="h")
-# plt.xlabel("年收入", fontname=Font)
+# plt.xlabel("年收入")
 # plt.xticks([0, 5, 10])
-# plt.title("年收入-箱型图", fontname=Font)
+# plt.title("年收入-箱型图")
 # plt.grid(axis='y')
 # #分布圖
 # plt.subplot(1, 2, 2)
 # plt.hist((df["income"]/1000)[df["card"]=="yes"], bins=30, color="skyblue", width=4.5)
-# plt.xlabel("年收入", fontname=Font)
-# plt.ylabel("人數", fontname=Font)
+# plt.xlabel("年收入")
+# plt.ylabel("人數")
 # plt.xticks([20, 40, 60, 80])
-# plt.title("年收入分布圖", fontname=Font)
+# plt.title("年收入分布圖")
 # plt.grid(axis='y')
-
-# plt.tight_layout()
 # plt.savefig("年收入-箱型圖及分布图")
-# plt.show()
 #-----------------------------------------------------------------------------#
 '''年收入與核卡結果關係 - 交叉分析長條圖'''
 df["年收分組"] = pd.cut(df["income"]/1000, bins=[20, 39, 59, 79, np.inf], labels=["20~39K", "40~59K", "60K~79K","80K以上"])
@@ -144,17 +134,15 @@ df["年收分組"] = pd.cut(df["income"]/1000, bins=[20, 39, 59, 79, np.inf], la
 # bar_2 = bar_1 + 0.35
 
 # plt.figure(figsize=(10, 6))
-
-# plt.bar(bar_1, No_counts, color='skyblue', width=0.35, label='No')
-# plt.bar(bar_2, Yes_counts, color='lightcoral', width=0.35, label='Yes')
-# plt.xticks(bar_1 + 0.35 / 2, No_counts.index, fontname=Font)
+# plt.bar(bar_1, No_counts, color='skyblue', width=0.35, label='核准未通過')
+# plt.bar(bar_2, Yes_counts, color='lightcoral', width=0.35, label='核准通過')
+# plt.xticks(bar_1 + 0.35 / 2, No_counts.index)
 # plt.grid(axis='y')
-# plt.xlabel('年收入(單位:千)', fontname=Font)
-# plt.ylabel('人數', fontname=Font)
-# plt.title('年收入與核卡結果關係-交叉分析長條圖', fontname=Font)
+# plt.xlabel('年收入(單位:千)')
+# plt.ylabel('人數')
+# plt.title('年收入與核準結果關係-交叉分析長條圖')
 # plt.legend()
-# plt.savefig("年齡與核卡結果關係-交叉分析長條圖")
-# plt.show()
+# plt.savefig("年收入與核準結果關係-交叉分析長條圖")
 #-----------------------------------------------------------------------------#
 '''年收入與核卡結果關係 - 長條圖'''
 # income_total = df["年收分組"].value_counts()
@@ -165,18 +153,13 @@ df["年收分組"] = pd.cut(df["income"]/1000, bins=[20, 39, 59, 79, np.inf], la
 
 # plt.figure(figsize=(10, 6))
 # plt.bar(yes_rates.index, yes_rates.values, width=0.5, color='red')
-# #yes_rates.plot(kind='bar', color='red') 
 
-# plt.xlabel('年收入(單位:千)', fontname=Font)
-# plt.ylabel('核卡成功率 (%)', fontname=Font)
-# plt.title('年收入與核卡結果關係 - 長條圖', fontname=Font)
-
-# plt.xticks(rotation=0, fontname=Font)
+# plt.xlabel('年收入(單位:千)')
+# plt.ylabel('核卡成功率 (%)')
+# plt.title('年收入與核卡結果關係 - 長條圖')
 # plt.yticks([20, 40, 60, 80])
 # plt.grid(axis='y')
-# plt.tight_layout()
 # plt.savefig("年收入與核卡結果關係 - 長條圖")
-# plt.show()
 #-----------------------------------------------------------------------------#
 '''租屋族與買房族'''#OK
 # Owner_counts = df['owner'].value_counts()
@@ -222,7 +205,7 @@ df["年收分組"] = pd.cut(df["income"]/1000, bins=[20, 39, 59, 79, np.inf], la
 # plt.grid(axis='y')
 # plt.savefig("職務身份與核卡成功率關係 - 長條圖")
 #-----------------------------------------------------------------------------#
-'''撫養人數''' 
+'''撫養人數 - 箱型圖及分布圖''' 
 # Dependents_median = df["dependents"].median()       #中位數:1
 # Dependents_mode = df["dependents"].mode().values[0] #眾數:0
 # Dependents_mean = df["dependents"].mean()           #平均數:0.99
@@ -318,9 +301,167 @@ df["年收分組"] = pd.cut(df["income"]/1000, bins=[20, 39, 59, 79, np.inf], la
 # plt.grid(axis='y')
 # plt.savefig("是否擁有主卡與核卡率關係 - 長條圖")
 #-----------------------------------------------------------------------------#
-''' 活躍用戶帳戶數量 - 箱型圖及分布圖''' # 以上的圖片都以存檔
+''' 活躍帳戶數量 - 箱型圖及分布圖''' # 以上的圖片都以存檔
+# Active_mean = df["active"].mean()       #6.9
+# Active_mode = df["active"].mode()[0]    #0
+# Active_median = df["active"].median()   #6
+# Active_Q1 = (df['active']/1000).quantile(0.25)     #Q1: 0.002
+# Active_Q2 = (df['active']/1000).quantile(0.5)      #Q2: 0.006
+# Active_Q3 = (df['active']/1000).quantile(0.75)     #Q3: 0.011
+
+# plt.figure(figsize=(10, 6))
+# plt.subplot(1, 2, 1)
+# sns.boxplot(df["active"], color="skyblue", orient="h")
+# plt.xlabel("活躍帳戶數量")
+# plt.xticks([0, 10, 20, 30, 40])
+# plt.title("活躍帳戶數量-箱型圖及分布圖")
+# plt.grid(axis='x')
+
+# plt.subplot(1, 2, 2)
+# plt.hist(df["active"][df["card"]=='yes'], bins=20, color="skyblue", width=3.5)
+# plt.xlabel("活躍帳戶數量")
+# plt.ylabel("人數")
+# plt.xticks([0, 10, 20, 30, 40, 50])
+# plt.yticks([0, 50, 100, 150, 200])
+# plt.title("活躍帳戶數量 - 分布圖")
+# plt.grid(axis='y')
+# plt.savefig("活躍帳戶數量-箱型圖及分布圖")
+#-----------------------------------------------------------------------------#
+'''活躍帳戶數量核准率 - 長條圖'''
+# df["活躍分組"] = pd.cut(df["active"], bins=[-np.inf, 3, 6, 9, 12, 15, 18, 21, 25, 46], 
+#                     labels=["0~3","3~6","6~9","9~12","12~15","15~18","18~21","21~25","25~26"])
+
+# Active_total = df["活躍分組"].value_counts()
+# Active_yes = df[df["card"]== "yes"]["活躍分組"].value_counts()
+# yes_rates = (Active_yes / Active_total) * 100
+
+# plt.bar(yes_rates.index, yes_rates.values, color='lightcoral', width=0.8, label='1')
+# plt.grid(axis="y")
+# plt.xlabel("活躍帳戶數量")
+# plt.ylabel('信用卡核准率')
+# plt.title("活躍帳戶數量與核准率關係 - 長條圖")
+# plt.savefig("活躍帳戶數量與核准率關係 - 長條圖")
+#-----------------------------------------------------------------------------#
+'''核卡通過者與其信用紀錄 - 長條圖'''
+df["信用分組"] = pd.cut(df["reports"], bins=[-np.inf, 0, np.inf], labels=["有", "沒有"])
+# Reports_yes = df[df["card"]=="yes"]["信用分組"]
+# counts = Reports_yes.value_counts() # 通過者有910位 有信用不良紀錄
+
+# plt.bar(counts.index, counts.values, color='lightcoral')
+# plt.xlabel("是否有信用不良紀錄")
+# plt.ylabel("人數")
+# plt.grid(axis='y')
+# plt.title("核卡通過者與其信用紀錄 - 長條圖")
+# #-----------------------------------------------------------------------------#
+'''核卡未通過者與其信用紀錄 - 長條圖'''
+# Reports_no = df[df["card"]=="no"]["信用分組"]
+# counts = Reports_no.value_counts() # 未通過者有151位 沒有信用不良紀錄
+
+# plt.bar(counts.index, counts.values, color='lightcoral')
+# plt.xlabel("是否有信用不良紀錄")
+# plt.ylabel("人數")
+# plt.grid(axis='y')
+# plt.title("核卡未通過者與其信用紀錄 - 長條圖")
+#-----------------------------------------------------------------------------#
+'''信用不良紀錄核卡率 - 長條圖'''
+# Reports_yes = df[df["card"]=="yes"]["reports"]
+# Reports_counts = Reports_yes.value_counts()
+# Reports_total = Reports_yes.shape[0]
+
+# print(Reports_counts)
+# plt.bar(yes_rates.index, yes_rates.values, color='lightcoral')
+# plt.xlabel("信用不良紀錄數量")
+# plt.ylabel("核准成功率")
+# plt.grid(axis='y')
+# plt.title("信用不良紀錄核卡率 - 長條圖")
+#-----------------------------------------------------------------------------#
+'''消費支出 - 箱型圖及分布圖'''
+# Active_mean = df["expenditure"].mean()       #184.9
+# Active_mode = df["expenditure"].mode()[0]    #0
+# Active_median = df["expenditure"].median()   #101
+# Active_Q1 = df["expenditure"].quantile(0.25)     #Q1: 0.002
+# Active_Q2 = df["expenditure"].quantile(0.5)      #Q2: 0.006
+# Active_Q3 = df["expenditure"].quantile(0.75)     #Q3: 0.011
 
 #-----------------------------------------------------------------------------#
+''' 消費支出核卡率 - 長條圖 '''
+# df["消費平均分組"] = pd.cut(df["expenditure"], bins=[-np.inf, 5, 20, 50, 100, 500, 1000, np.inf], 
+#                       labels=["<5","5~20","20~50", "50~100", "100~500","500~1000","1000-"])
 
+# Expenditure_total = df[df["card"]== "yes"].shape[0]
+# Expenditure_yes = df[df["card"]== "yes"]["消費平均分組"].value_counts()
+# yes_rates = (Expenditure_yes / Expenditure_total) * 100
+# print(Expenditure_total)
+# print()
+# print(Expenditure_yes)
+
+# print(yes_rates)
+# plt.bar(yes_rates.index, yes_rates.values, color='lightcoral', width=0.8, label='1')
+# plt.grid(axis="y")
+# plt.xlabel("活躍帳戶數量")
+# plt.ylabel('信用卡核准率')
+# plt.title("活躍帳戶數量與核准率關係 - 長條圖")
+# plt.savefig("活躍帳戶數量與核准率關係 - 長條圖")
 #-----------------------------------------------------------------------------#
+''' 信用卡支出占比 - 箱型圖及分布圖 '''
+# Share_mean = df["share"].mean()       #6.86%
+# Share_mode = df["share"].mode()[0]    #0%
+# Share_median = df["share"].median()   #3.87%
+# Share_Q1 = (df['share']).quantile(0.25)     #Q1: 22%
+# Share_Q2 = (df['share']).quantile(0.5)      #Q2: 3.8%
+# Share_Q3 = (df['share']).quantile(0.75)     #Q3: 9.3%
+
+# plt.figure(figsize=(10, 6))
+# plt.subplot(1, 2, 1)
+# sns.boxplot(df["share"], color="skyblue", orient="h")
+# plt.xlabel("信用卡支出占比")
+# plt.xticks([0, 20, 40, 60, 80])
+# plt.title("信用卡支出占比 - 箱型圖")
+# plt.grid(axis='x')
+
+# plt.subplot(1, 2, 2)
+# plt.hist(df['share'][df["card"]=='yes'], bins=20, color="skyblue", width=4.5)
+# plt.xlabel("信用卡支出占比")
+# plt.ylabel("人數")
+# plt.xticks([0, 20, 30, 40, 50, 60])
+# plt.yticks([0, 100, 200, 300, 400])
+# plt.title("信用卡支出占比 - 分布圖")
+# plt.grid(axis='y')
+# plt.savefig("信用卡支出占比-箱型圖及分布圖")
+#-----------------------------------------------------------------------------#
+''' 消費支出區間占比影響核准率 - 長條圖'''
+# df["信用卡支出占比分組"] = pd.cut(df["share"], bins=[-np.inf, 1, 5, 10, 20, 30, 40, 50,np.inf], 
+#                        labels=["<1", "1~5", "5~10","10~20", "20~30", "30~40","40~50","50-"])
+
+# Share_total = df["信用卡支出占比分組"].value_counts()
+# Share_yes = df[df["card"]== "yes"]["信用卡支出占比分組"].value_counts()
+# yes_rates = (Share_yes / Share_total) * 100 # "<1"的核卡率僅有28% 其餘區間皆有高達100%
+
+# plt.bar(yes_rates.index, yes_rates.values, color='lightcoral', width=0.8, label='1')
+# plt.grid(axis="y")
+# plt.xlabel("消費支出區間占比")
+# plt.ylabel('信用卡核准率')
+# plt.title("各消費支出區間占比影響核准率 - 長條圖")
+# plt.savefig("消費支出區間占比影響核准率 - 長條圖")
+#-----------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
